@@ -40,4 +40,10 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('admin')->name('admin.')
     })->name('dashboard');
 
     // other admin routes here
+
+    Route::get('/photos', function () {
+        return inertia('Admin/Photos',[
+            'photos'=>Photo::all()
+        ]);
+    })->name('photos');
 });

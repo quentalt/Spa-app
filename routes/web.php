@@ -43,7 +43,23 @@ Route::middleware(['auth:sanctum', 'verified'])->prefix('admin')->name('admin.')
 
     Route::get('/photos', function () {
         return inertia('Admin/Photos',[
-            'photos'=>Photo::all()
+            'photos'=>Photo::orderByDesc('id')->get()
         ]);
     })->name('photos');
+
+    Route::get('/photos/create',function () {
+ return inertia('Admin/PhotoCreate');
+    })->name('photos.create');
+
+    Route::post('/photos',function () {
+        $validate_data= Request::validate([
+            'path' => ['required', 'image','max:500'],
+            'description' => ['required','max:500'],
+        ]);
+        $path = Storage::disk('public')->put('photos',Request::file('path'));
+        $validate_data['path'] = $path;
+//        dd($validate_data);
+        Photo::create($validate_data);
+             return to_route('admin.photos');
+    })->name('photos.store');
 });
